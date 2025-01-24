@@ -325,9 +325,11 @@ class AwsS3 {
         uploadKey = '$filename';
       }
 
-      final filestream = Stream.fromIterable(file.map((e) => [e]));
+      // final filestream = Stream.fromIterable(file.map((e) => [e]));
+      final multipartFile =
+          http.MultipartFile.fromBytes('file', file, filename: filename);
 
-      final stream = http.ByteStream(filestream);
+      // final stream = http.ByteStream(filestream);
       final length = file.lengthInBytes;
 
       final uri = Uri.parse(endpoint);
@@ -336,15 +338,16 @@ class AwsS3 {
         uri,
         onProgress: (int bytes, int total) {
           final progress = bytes / total;
-          print('progress: $progress ($bytes/$total)');
+          // print('progress: $progress ($bytes/$total)');
           if (onUploadProgress != null) {
             onUploadProgress(bytes, total);
             // CALL STATUS CALLBACK;
           }
         },
       );
-      final multipartFile =
-          http.MultipartFile('file', stream, length, filename: filename);
+
+      // final multipartFile =
+      //     http.MultipartFile('file', stream, length, filename: filename);
 
       // Convert metadata to AWS-compliant params before generating the policy.
       final metadataParams = _convertMetadataToParams(metadata);
